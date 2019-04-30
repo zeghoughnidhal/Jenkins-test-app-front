@@ -3,16 +3,15 @@
 })
 export class JobService {
 
-  configUrl = 'http://localhost:8090/api/v1/folders/jobs/Functional-tests/Tempest';
-  jobs: object;
+    jobs: object;
 
   getConfig() {
-    console.log('Coucou: getConfig start');
-    return this.http.get(this.configUrl);
+    console.log('getConfig start');
+    return this.http.get('/api/folders/jobs/Functional-tests/Rally');
   }
 
   showConfig() {
-    console.log('Coucou: showConfig start');
+    console.log('showConfig start');
     this.getConfig()
       .subscribe((data) => console.log(data));
   }

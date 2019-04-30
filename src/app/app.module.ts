@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ProjectComponent } from './project/project.component';
+import {IconsModule, WavesModule} from 'angular-bootstrap-md';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,9 @@ import { ProjectComponent } from './project/project.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    IconsModule,
+    WavesModule
   ],
   providers: [],
   bootstrap: [AppComponent],
