@@ -36,9 +36,6 @@
         <span class="glyphicon glyphicon-cloud-download"></span>
       </button>
 
-      <button type="button" mdbBtn color="white" outline="true" rounded="true" size="sm" class="px-2" mdbWavesEffect>
-        <mdb-icon fas icon="info-circle-circle" class="mt-0"></mdb-icon>
-      </button>
     </div>
 
   </div>
@@ -57,32 +54,32 @@
             <mdb-checkbox></mdb-checkbox>
           </th>
           <th class="th-lg">
-            <a (click)="sortBy('first')">First Name
+            <a (click)="sortBy('name')">Job Name
               <mdb-icon fas icon="sort" class="ml-1"></mdb-icon>
             </a>
           </th>
           <th class="th-lg">
-            <a (click)="sortBy('last')">Last Name
+            <a (click)="sortBy('firstB')">First Build
               <mdb-icon fas icon="sort" class="ml-1"></mdb-icon>
             </a>
           </th>
           <th class="th-lg">
-            <a (click)="sortBy('username')">Username
+            <a (click)="sortBy('lastB')">Last Build
               <mdb-icon fas icon="sort" class="ml-1"></mdb-icon>
             </a>
           </th>
           <th class="th-lg">
-            <a (click)="sortBy('email')">Email
+            <a (click)="sortBy('colorSt')">Color Status
               <mdb-icon fas icon="sort" class="ml-1"></mdb-icon>
             </a>
           </th>
           <th class="th-lg">
-            <a (click)="sortBy('country')">Country
+            <a (click)="sortBy('result')">Result
               <mdb-icon fas icon="sort" class="ml-1"></mdb-icon>
             </a>
           </th>
           <th class="th-lg">
-            <a (click)="sortBy('city')">City
+            <a (click)="sortBy('views')">Views
               <mdb-icon fas icon="sort" class="ml-1"></mdb-icon>
             </a>
           </th>
@@ -96,18 +93,20 @@
           <th scope="row">
             <mdb-checkbox></mdb-checkbox>
           </th>
-          <td>{{row.first}}</td>
-          <td>{{row.last}}</td>
-          <td>{{row.username}}</td>
-          <td>{{row.email}}</td>
-          <td>{{row.country}}</td>
-          <td>{{row.city}}</td>
+          <td>{{row.name}}</td>
+          <td>{{row.firstBuild}}</td>
+          <td>{{row.lastBuild}}</td>
+          <td>{{row.color}}</td>
+          <td>{{row.env}}</td>
+          <td>{{row.folderName}}</td>
         </tr>
         </tbody>
         <!--Table body-->
       </table>
       <!--Table-->
     </div>
+
+
   </div>
 </mdb-card>
 

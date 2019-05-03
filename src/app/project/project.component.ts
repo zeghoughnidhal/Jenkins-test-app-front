@@ -8,15 +8,27 @@ import {JobService} from '../job.service';
 })
 export class ProjectComponent implements OnInit {
 
-  tableData: object[] = [
 
-  ];
+   tableData: Array<any> = new Array<any>();
+ // tableData: <any>() = [
+
+  //];
   private sorted = false;
 
   constructor(private jobService: JobService) {
   }
 
+ // ngOnInit() {
+   // this.tableData = this.jobService.getJobsByFolderName('Rally').subscribe();
+  //}
+
+
   ngOnInit() {
+    this.jobService.getJobsByFolderName('Rally').subscribe(
+      values => {
+        this.tableData = values;
+      }
+    );
   }
 
   sortBy(by: string | any): void {

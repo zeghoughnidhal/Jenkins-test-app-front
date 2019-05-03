@@ -3,21 +3,21 @@
 })
 export class JobService {
 
-    jobs: object;
+    jobs: Array<any> = new Array<any>();
 
-  getConfig() {
-    console.log('getConfig start');
-    return this.http.get('/api/folders/jobs/Functional-tests/Rally');
+  getJobsByFolderName(folderName):Observable<any>  {
+    console.log('getJobsByFolderName start');
+    return this.http.get('/api/folders/jobs/Functional-tests/' + folderName);
   }
 
-  showConfig() {
-    console.log('showConfig start');
-    this.getConfig()
+  showJobsByFolderName(folderName) {
+    console.log('showJobs start');
+    this.getJobsByFolderName(folderName)
       .subscribe((data) => console.log(data));
   }
 
   constructor(private http: HttpClient) {
-    console.log(this.showConfig());
+    console.log(this.showJobsByFolderName('Rally'));
   }
 }
 import { Injectable } from '@angular/core';
