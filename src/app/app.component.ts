@@ -1,19 +1,17 @@
-import { Component } from '@angular/core';
-import { NgModule } from '@angular/core';
-import { MDBBootstrapModule } from 'angular-bootstrap-md';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 
-@NgModule({
-  imports: [
-    MDBBootstrapModule.forRoot()
-  ]
-})
-
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'front-jenkins';
+
+  constructor() {
+  }
+
+  ngOnInit() {
+  }
 }

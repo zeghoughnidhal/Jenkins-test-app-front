@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {JobService} from '../job.service';
+import {JobService} from '../services/job.service';
 
 @Component({
   selector: 'app-project',
@@ -9,8 +9,8 @@ import {JobService} from '../job.service';
 export class ProjectComponent implements OnInit {
 
 
-   tableData: Array<any> = new Array<any>();
- // tableData: <any>() = [
+  tableData: Array<any> = new Array<any>();
+  // tableData: <any>() = [
 
   //];
   private sorted = false;
@@ -18,14 +18,15 @@ export class ProjectComponent implements OnInit {
   constructor(private jobService: JobService) {
   }
 
- // ngOnInit() {
-   // this.tableData = this.jobService.getJobsByFolderName('Rally').subscribe();
+  // ngOnInit() {
+  // this.tableData = this.jobService.getJobsByFolderName('Rally').subscribe();
   //}
 
 
   ngOnInit() {
-    this.jobService.getJobsByFolderName('Rally').subscribe(
+    this.jobService.getJobsByFolderPath('/Tempest/ScheduleTempest').subscribe(
       values => {
+        console.log('values', values);
         this.tableData = values;
       }
     );
