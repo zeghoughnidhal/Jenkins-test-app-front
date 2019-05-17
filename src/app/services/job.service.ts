@@ -23,4 +23,8 @@ export class JobService {
   getJobsForView(folderPath): Observable<any>  {
     return this.http.get('/api/forView/folders/' + folderPath);
   }
+
+  getJobsForMetricsView(folderPath): Observable<any>  {
+    return this.http.get('/api/forView/metrics/' + folderPath);
+  }
 }

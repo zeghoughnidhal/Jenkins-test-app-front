@@ -116,6 +116,8 @@
               <td> <span [ngbPopover]="row.description" [popoverTitle]="row.name">{{row.name}}</span></td>
               <td><i [ngStyle]="{'color': row.color === 'blue' ? 'green' :
                                           row.color === 'red' ? 'red' :
+                                          row.color === 'grey' ? 'grey' :
+                                          row.color === 'notbuilt' ? 'white' :
                                           'yellow'}"
                      class="fa fa-fw fa-ambulance"></i></td>
               <td>{{row.env}}</td>

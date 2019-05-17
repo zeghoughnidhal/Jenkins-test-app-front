@@ -11,6 +11,7 @@ const routes: Routes = [
             { path: 'dashboard', loadChildren: './dashboard/dashboard.module#DashboardModule' },
             { path: 'charts', loadChildren: './charts/charts.module#ChartsModule' },
             { path: 'jobs', loadChildren: './tables/tables.module#TablesModule' },
+            { path: 'metrics', loadChildren: './metric/metric.module#MetricModule' },
         ]
     }
 ];
