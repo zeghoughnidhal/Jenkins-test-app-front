@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import { JobService } from '../../services/job.service';
 import { ActivatedRoute } from '@angular/router';
 import {routerTransition} from '../../router.animations';
@@ -13,12 +13,15 @@ import {routerTransition} from '../../router.animations';
 export class MetricComponent implements OnInit {
 
   // variables
-  jobs: any;
-  pathFull: string;
   envs: [];
+  jobs: any;
+  @Input() pathFull = {
+    text: 'Functional-tests/Tempest/ScheduleTempest'
+  };
 
-  private refreshFolder() {
-    this.jobService.getJobsForMetricsView(this.pathFull).subscribe(
+  refreshFolder(path) {
+    console.log('getJobsForMetricsView : path', path);
+    this.jobService.getJobsForMetricsView(path).subscribe(
       value => {
         console.log('getJobsForMetricsView : values', value);
         this.envs = value.envs;
@@ -33,7 +36,6 @@ export class MetricComponent implements OnInit {
 
   // init
   ngOnInit() {
-    this.pathFull = 'Functional-tests/Tempest/ScheduleTempest';
-    this.refreshFolder();
+    this.refreshFolder(this.pathFull.text);
   }
 }
