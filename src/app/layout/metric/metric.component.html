@@ -1,33 +1,63 @@
+<script src="metric.component.ts"></script>
 <div [@routerTransition]>
+
+
+
   <div class="panel panel-default">
+
     <!-- Default panel contents -->
-    <div class="panel-heading">  </div>
-    <div class="panel-body">
-      <p>...</p>
+    <div class="panel-heading">
+      <div class="input-group">
+        <span class="input-group-addon" id="basic-addon3">
+          <i class="fa fa-fw fa-folder"></i>
+        </span>
+        <input type="text" class="form-control" id="name"
+               required
+               [(ngModel)]="pathFull.text" name="name">
+        <button type="button" class="btn btn-primary" (click)="refreshFolder(pathFull.text)">Refresh</button>
+      </div>
+
+
+
+
     </div>
 
+    <div class="panel-body">
     <!-- Table -->
-    <table class="table">
+      <table class="table">
 
-      <!-- envs in header -->
-      <thead>
-      <tr>
-      <th *ngFor="let head of envs">{{head}}</th>
-      </tr>
-      </thead>
-
-      <!-- jobs in body -->
-
-      <tbody>
-
-
-        <tr *ngFor="let item of jobs | keyvalue">
-          <td> {{ item.key }}</td>
-
+        <!-- envs in header -->
+        <thead>
+        <tr>
+        <th>Job Name</th>
+        <th *ngFor="let env of envs">{{env}}</th>
         </tr>
+        </thead>
 
-      </tbody>
+        <!-- jobs results in table body -->
+        <tbody>
+          <tr *ngFor="let keyViewName of jobs | keyvalue">
+            <!--job name (keyViewName.key)-->
+            <td> {{ keyViewName.key }}</td>
+            <!--job results for this keyViewName (for each env)-->
+            <td *ngFor="let env2 of envs" >
+              <div *ngIf="jobs[keyViewName.key][env2]">
+                <div *ngIf="jobs[keyViewName.key][env2].color; let jobColor">
+                  <i [ngStyle]="{'color': jobColor === 'blue' ? 'green' :
+                                                jobColor === 'red' ? 'red' :
+                                                jobColor === 'grey' ? 'grey' :
+                                                jobColor === 'notbuilt' ? 'white' :
+                                                'yellow'}"
+                     class="fa fa-fw fa-star"></i>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
 
-    </table>
+      </table>
+
+    </div>
+
   </div>
 </div>
