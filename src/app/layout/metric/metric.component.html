@@ -1,30 +1,32 @@
 <script src="metric.component.ts"></script>
 <div [@routerTransition]>
-
-
-
   <div class="panel panel-default">
-
-    <!-- Default panel contents -->
     <div class="panel-heading">
-      <div class="input-group">
-        <span class="input-group-addon" id="basic-addon3">
+      <div class="row">
+
+        <div class="col-md-1">
           <i class="fa fa-fw fa-folder"></i>
-        </span>
-        <input type="text" class="form-control" id="name"
-               required
-               [(ngModel)]="pathFull.text" name="name">
-        <button type="button" class="btn btn-primary" (click)="refreshFolder(pathFull.text)">Refresh</button>
+        </div>
+
+        <div class="col-md-5">
+          <input type="text" class="form-control" id="name" [(ngModel)]="pathFull.text" name="name">
+        </div>
+
+        <div class="col-md-2">
+          <button type="button" class="btn btn-primary" (click)="refreshFolder(pathFull.text)">Refresh</button>
+        </div>
+
+<!--        <div class="row col-md-4">-->
+<!--          <label class="checkbox-inline">-->
+<!--            <input type="checkbox" [(ngModel)]="displayJobLink"> Show Job Link-->
+<!--          </label>-->
+<!--        </div>-->
+
       </div>
-
-
-
-
     </div>
-
     <div class="panel-body">
     <!-- Table -->
-      <table class="table">
+      <table class="table table-striped">
 
         <!-- envs in header -->
         <thead>
@@ -36,28 +38,44 @@
 
         <!-- jobs results in table body -->
         <tbody>
-          <tr *ngFor="let keyViewName of jobs | keyvalue">
-            <!--job name (keyViewName.key)-->
-            <td> {{ keyViewName.key }}</td>
-            <!--job results for this keyViewName (for each env)-->
-            <td *ngFor="let env2 of envs" >
-              <div *ngIf="jobs[keyViewName.key][env2]">
-                <div *ngIf="jobs[keyViewName.key][env2].color; let jobColor">
-                  <i [ngStyle]="{'color': jobColor === 'blue' ? 'green' :
-                                                jobColor === 'red' ? 'red' :
-                                                jobColor === 'grey' ? 'grey' :
-                                                jobColor === 'notbuilt' ? 'white' :
-                                                'yellow'}"
-                     class="fa fa-fw fa-star"></i>
-                </div>
-              </div>
-            </td>
-          </tr>
+              <tr *ngFor="let keyViewName of jobs | keyvalue">
+                <!--job name (keyViewName.key)-->
+                <td> {{ keyViewName.key }}</td>
+                <!--job results for this keyViewName (for each env)-->
+                <td *ngFor="let env2 of envs">
+                  <div *ngIf="jobs[keyViewName.key][env2]; let job">
+                    <span (click)="selectJobInfo(job)">
+                      <i [ngStyle]="{'color': job.color === 'blue' ? 'green' :
+                                                  job.color === 'red' ? 'red' :
+                                                  job.color === 'grey' ? 'grey' :
+                                                  job.color === 'notbuilt' ? 'white' :
+                                                  'yellow'}"
+                         class="fa fa-fw fa-star">
+                        </i>
+                    </span>
+<!--                    <span *ngIf="displayJobLink">-->
+<!--                      <a href="{{ job.url }}"><i class="fa fa-fw fa-eye"></i></a>-->
+<!--                    </span>-->
+                  </div>
+                </td>
+              </tr>
         </tbody>
 
       </table>
 
     </div>
-
   </div>
+
+  <div *ngIf="selectedJob">
+    Folder Name : {{ selectedJob.folderName }} <br>
+    Original Name : {{ selectedJob.name }} <br>
+    Jenkins URL : <a href="{{ selectedJob.url }}"> {{ selectedJob.url }} </a> <br>
+    Latest build Date : {{ selectedJob.lastBuild.timestamp | date }} <br>
+    Latest build Duration : {{ selectedJob.lastBuild.duration | date: 'HH:mm:ss': 'UTC' }} <br>
+    Latest 3 builds : <br>
+    <div *ngFor="let build of getLastThreeBuilds(selectedJob)">
+      #{{ build.id }} : {{ build.result }}
+    </div>
+  </div>
+
 </div>
