@@ -47,9 +47,7 @@
                     <span (click)="selectJobInfo(job)">
                       <i [ngStyle]="{'color': job.color === 'blue' ? 'green' :
                                                   job.color === 'red' ? 'red' :
-                                                  job.color === 'grey' ? 'grey' :
-                                                  job.color === 'notbuilt' ? 'white' :
-                                                  'yellow'}"
+                                                  'grey'}"
                          class="fa fa-fw fa-star">
                         </i>
                     </span>
@@ -66,9 +64,14 @@
     </div>
   </div>
 
+
   <div *ngIf="selectedJob">
+    <div class="card">
+      <div class="card-header">
+        {{ selectedJob.name }}
+      </div>
+      <div class="card-body">
     Folder Name : {{ selectedJob.folderName }} <br>
-    Original Name : {{ selectedJob.name }} <br>
     Jenkins URL : <a href="{{ selectedJob.url }}"> {{ selectedJob.url }} </a> <br>
     Latest build Date : {{ selectedJob.lastBuild.timestamp | date }} <br>
     Latest build Duration : {{ selectedJob.lastBuild.duration | date: 'HH:mm:ss': 'UTC' }} <br>
@@ -76,6 +79,8 @@
     <div *ngFor="let build of getLastThreeBuilds(selectedJob)">
       #{{ build.id }} : {{ build.result }}
     </div>
+  </div>
+  </div>
   </div>
 
 </div>
