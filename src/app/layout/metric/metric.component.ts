@@ -1,6 +1,7 @@
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { routerTransition } from '../../router.animations';
 import { JobService } from '../../services/job.service';
-import {routerTransition} from '../../router.animations';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-metric',
@@ -18,13 +19,21 @@ export class MetricComponent implements OnInit {
     text: 'Functional-tests/Tempest/ScheduleTempest'
   };
   // @Input() displayJobLink = false;
-  selectedJob: any;
+
+  /// variables for browser
+  private subRoute: any;
+  selectedJob: string;
+  pathLevel1: string;
+  pathLevel2: string;
+  pathLevel3: string;
+  pathFullLevels: string;
+  subFolders = ['sub1', 'sub2', 'sub3'];
+
 
   refreshFolder(path) {
     console.log('getJobsForMetricsView : path', path);
     this.jobService.getJobsForMetricsView(path).subscribe(
       value => {
-        console.log('getJobsForMetricsView : values', value);
         this.envs = value.envs;
         this.jobs = value.jobs;
       }
@@ -43,13 +52,28 @@ export class MetricComponent implements OnInit {
     return builds;
   }
 
+  parseRoute() {
+    console.log('START parseRoute');
+    this.subRoute = this.route.params.subscribe(params => {
+      this.pathLevel1 = params['pathLevel1'] || null;
+      this.pathLevel2 = params['pathLevel2'] || null;
+      this.pathLevel3 = params['pathLevel3'] || null;
+      this.pathFullLevels = JobService.getFolderPath(this.pathLevel1, this.pathLevel2, this.pathLevel3);
+    });
+  }
+
   // constructor
-  constructor(private jobService: JobService) {
+  constructor(private jobService: JobService, private route: ActivatedRoute) {
   }
 
   // init
   ngOnInit() {
+    this.parseRoute();
     this.refreshFolder(this.pathFull.text);
+  }
+
+  ngOnDestroy() {
+    this.subRoute.unsubscribe();
   }
 
 }
