@@ -1,5 +1,36 @@
-<script src="metric.component.ts"></script>
 <div [@routerTransition]>
+
+  <div class="card mb-3">
+
+    <div class="row">
+      <div class="col col-xl-12 col-lg-12">
+        <button class="btn btn-info" [routerLink]="['/metrics']" [routerLinkActive]="['router-link-active']">
+          <i class="fa fa-fw fa-folder"></i>
+          root
+        </button>
+        <button class="btn btn-info" *ngIf="pathLevel1"
+                [routerLink]="['/metrics', pathLevel1]"
+                [routerLinkActive]="['router-link-active']">
+          <i class="fa fa-fw fa-folder"></i>
+          {{ pathLevel1 }}
+        </button>
+        <button class="btn btn-info" *ngIf="pathLevel2"
+                [routerLink]="['/metrics', pathLevel1, pathLevel2]"
+                [routerLinkActive]="['router-link-active']">
+          <i class="fa fa-fw fa-folder"></i>
+          {{ pathLevel2 }}
+        </button>
+        <button class="btn btn-info" *ngIf="pathLevel3"
+                [routerLink]="['/metrics', pathLevel1, pathLevel2, pathLevel3]"
+                [routerLinkActive]="['router-link-active']">
+          <i class="fa fa-fw fa-folder"></i>
+          {{ pathLevel3 }}
+        </button>
+      </div>
+    </div>
+
+  </div>
+
   <div class="panel panel-default">
     <div class="panel-heading">
       <div class="row">
