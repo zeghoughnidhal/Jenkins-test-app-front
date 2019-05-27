@@ -1,7 +1,6 @@
 <div [@routerTransition]>
 
   <div class="card mb-3">
-
     <div class="row">
       <div class="col col-xl-12 col-lg-12">
         <button class="btn btn-info" [routerLink]="['/metrics']" [routerLinkActive]="['router-link-active']">
@@ -28,7 +27,50 @@
         </button>
       </div>
     </div>
+  </div>
 
+  <div class="row" *ngIf="subFolders.length">
+    <div class="col col-xl-12 col-lg-12">
+      <div class="breadcrumb">
+
+        <span *ngIf="!pathLevel1 && !pathLevel2 && !pathLevel3">
+          <button class="btn btn-info" *ngFor="let sub_folder of subFolders"
+                  [routerLink]="['/metrics', sub_folder]"
+                  [routerLinkActive]="['router-link-active']">
+            <i class="fa fa-fw fa-folder"></i>
+            {{ sub_folder }}
+          </button>
+        </span>
+
+        <span *ngIf="pathLevel1 && !pathLevel2 && !pathLevel3">
+          <button class="btn btn-info" *ngFor="let sub_folder of subFolders"
+                  [routerLink]="['/metrics', pathLevel1, sub_folder]"
+                  [routerLinkActive]="['router-link-active']">
+            <i class="fa fa-fw fa-folder"></i>
+            {{ sub_folder }}
+          </button>
+        </span>
+
+        <span *ngIf="pathLevel2 && !pathLevel3">
+          <button class="btn btn-info" *ngFor="let sub_folder of subFolders"
+                  [routerLink]="['/metrics', pathLevel1, pathLevel2, sub_folder]"
+                  [routerLinkActive]="['router-link-active']">
+            <i class="fa fa-fw fa-folder"></i>
+            {{ sub_folder }}
+          </button>
+        </span>
+
+        <span *ngIf="pathLevel3">
+          <button class="btn btn-info" *ngFor="let sub_folder of subFolders"
+                  [routerLink]="['/metrics', pathLevel1, pathLevel2, pathLevel3, sub_folder]"
+                  [routerLinkActive]="['router-link-active']">
+            <i class="fa fa-fw fa-folder"></i>
+            {{ sub_folder }}
+          </button>
+        </span>
+      </div>
+
+    </div>
   </div>
 
   <div class="panel panel-default">

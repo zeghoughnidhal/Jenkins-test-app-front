@@ -27,7 +27,7 @@ export class MetricComponent implements OnInit {
   pathLevel2: string;
   pathLevel3: string;
   pathFullLevels: string;
-  subFolders: [];
+  subFolders = ['sub1', 'sub2', 'sub3'];
 
 
   refreshFolder(path) {
