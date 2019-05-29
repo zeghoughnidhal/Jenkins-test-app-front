@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { JobService } from '../../services/job.service';
 import { ActivatedRoute } from '@angular/router';
+import {Observable, Subscription} from "rxjs";
 
 @Component({
   selector: 'app-metric',
@@ -19,6 +20,7 @@ export class MetricComponent implements OnInit {
     text: 'Functional-tests/Tempest/ScheduleTempest'
   };
   // @Input() displayJobLink = false;
+  buildErrors = {};
 
   /// variables for browser
   private subRoute: any;
@@ -60,6 +62,16 @@ export class MetricComponent implements OnInit {
       this.pathLevel3 = params['pathLevel3'] || null;
       this.pathFullLevels = JobService.getFolderPath(this.pathLevel1, this.pathLevel2, this.pathLevel3);
     });
+  }
+
+  getBuildErrorTests(jobFullPath, buildId) {
+    this.jobService.getBuildErrorTests(jobFullPath, buildId).subscribe(
+      value => {
+        if (this.buildErrors[jobFullPath] === undefined) {
+          this.buildErrors[jobFullPath] = {};
+        }
+        this.buildErrors[jobFullPath][buildId] = value;
+      });
   }
 
   // constructor

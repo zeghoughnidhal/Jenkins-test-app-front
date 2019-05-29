@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse} from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class JobService {
 
-  constructor(private http: HttpClient) {
+  constructor(private httpClient: HttpClient) {
   }
 
   jobs: Array<any> = new Array<any>();
@@ -16,15 +16,20 @@ export class JobService {
     return paths.filter(p => p !== null && p !== '').join('/');
   }
 
-  getJobsByFolderPath(folderPath): Observable<any>  {
-    return this.http.get('/api/jobs/' + folderPath);
+  getJobsByFolderPath(folderPath): Observable<any> {
+    return this.httpClient.get('/api/jobs/' + folderPath);
   }
 
-  getJobsForView(folderPath): Observable<any>  {
-    return this.http.get('/api/forView/folders/' + folderPath);
+  getJobsForView(folderPath): Observable<any> {
+    return this.httpClient.get('/api/forView/folders/' + folderPath);
   }
 
-  getJobsForMetricsView(folderPath): Observable<any>  {
-    return this.http.get('/api/forView/metrics/' + folderPath);
+  getJobsForMetricsView(folderPath): Observable<any> {
+    return this.httpClient.get('/api/forView/metrics/' + folderPath);
+  }
+
+  getBuildErrorTests(jobFullPath, buildId): Observable<any> {
+    const url = '/api/results/' + jobFullPath + '/' + buildId;
+    return this.httpClient.get(url);
   }
 }

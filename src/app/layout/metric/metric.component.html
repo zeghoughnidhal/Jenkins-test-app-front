@@ -144,15 +144,40 @@
         {{ selectedJob.name }}
       </div>
       <div class="card-body">
-    Folder Name : {{ selectedJob.folderName }} <br>
-    Jenkins URL : <a href="{{ selectedJob.url }}"> {{ selectedJob.url }} </a> <br>
-    Latest build Date : {{ selectedJob.lastBuild.timestamp | date }} <br>
-    Latest build Duration : {{ selectedJob.lastBuild.duration | date: 'HH:mm:ss': 'UTC' }} <br>
-    Latest 3 builds : <br>
-    <div *ngFor="let build of getLastThreeBuilds(selectedJob)">
-      #{{ build.id }} : {{ build.result }}
-    </div>
-  </div>
+        Folder Name : {{ selectedJob.folderName }} <br>
+        Jenkins URL : <a href="{{ selectedJob.url }}"> {{ selectedJob.url }} </a> <br>
+        Latest build Date : {{ selectedJob.lastBuild.timestamp | date }} <br>
+        Latest build Duration : {{ selectedJob.lastBuild.duration | date: 'HH:mm:ss': 'UTC' }} <br>
+        Latest 3 builds : <br>
+
+<!--        <ngb-accordion #acc="ngbAccordion" activeIds="">-->
+
+          <div *ngFor="let build of getLastThreeBuilds(selectedJob)">
+
+            <button type="button" class="btn btn-primary" (click)="getBuildErrorTests(selectedJob.fullName, build.id)">Refresh</button>
+              <div *ngIf="buildErrors[selectedJob.fullName] && buildErrors[selectedJob.fullName][build.id]">
+                <div *ngFor="let testError of buildErrors[selectedJob.fullName][build.id]">
+                  {{ testError.className }}
+                </div>
+              </div>
+
+<!--            <ngb-panel title="{{ build.id }}">-->
+<!--              <ng-template ngbPanelContent>-->
+<!--              {{ build.result }}-->
+
+<!--                <div *ngIf="getBuildErrorTests(selectedJob.fullName, build.id) | async; let buildErrors">-->
+<!--                  <div *ngFor="let error of buildErrors">-->
+<!--                      {{ error.className }}-->
+<!--                  </div>-->
+<!--                </div>-->
+
+<!--              </ng-template>-->
+<!--            </ngb-panel>-->
+
+          </div>
+
+<!--        </ngb-accordion>-->
+      </div>
   </div>
   </div>
 
