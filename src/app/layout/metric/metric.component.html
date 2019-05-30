@@ -2,7 +2,7 @@
 
   <div class="card mb-3">
     <div class="row">
-      <div class="col col-xl-12 col-lg-12">
+      <div class="col col-xl-10 col-lg-10">
         <button class="btn btn-info" [routerLink]="['/metrics']" [routerLinkActive]="['router-link-active']">
           <i class="fa fa-fw fa-folder"></i>
           root
@@ -26,6 +26,11 @@
           {{ pathLevel3 }}
         </button>
       </div>
+
+      <div class="col col-xl-2 col-lg-2">
+        <button type="button" class="btn btn-primary" (click)="refreshFolder(pathFullLevels)">Refresh</button>
+      </div>
+
     </div>
   </div>
 
@@ -75,85 +80,88 @@
 
   <div class="panel panel-default">
     <div class="panel-heading">
-      <div class="row">
 
-        <div class="col-md-1">
-          <i class="fa fa-fw fa-folder"></i>
-        </div>
-
-        <div class="col-md-5">
-          <input type="text" class="form-control" id="name" [(ngModel)]="pathFull.text" name="name">
-        </div>
-
-        <div class="col-md-2">
-          <button type="button" class="btn btn-primary" (click)="refreshFolder(pathFull.text)">Refresh</button>
-        </div>
-
-<!--        <div class="row col-md-4">-->
-<!--          <label class="checkbox-inline">-->
-<!--            <input type="checkbox" [(ngModel)]="displayJobLink"> Show Job Link-->
-<!--          </label>-->
-<!--        </div>-->
-
-      </div>
     </div>
     <div class="panel-body">
-    <!-- Table -->
+      <!-- Table -->
       <table class="table table-striped">
 
         <!-- envs in header -->
         <thead>
         <tr>
-        <th>Job Name</th>
-        <th *ngFor="let env of envs">{{env}}</th>
+          <th style="width: 20%">Job Name</th>
+          <th *ngFor="let env of envs">{{env}}</th>
         </tr>
         </thead>
 
         <!-- jobs results in table body -->
         <tbody>
-              <tr *ngFor="let keyViewName of jobs | keyvalue">
-                <!--job name (keyViewName.key)-->
-                <td> {{ keyViewName.key }}</td>
-                <!--job results for this keyViewName (for each env)-->
-                <td *ngFor="let env2 of envs">
-                  <div *ngIf="jobs[keyViewName.key][env2]; let job">
-                    <span (click)="selectJobInfo(job)">
+        <tr *ngFor="let keyViewName of jobs | keyvalue">
+          <!--job name (keyViewName.key)-->
+          <td> {{ keyViewName.key }}</td>
+          <!--job results for this keyViewName (for each env)-->
+          <td *ngFor="let env2 of envs">
+            <div *ngIf="jobs[keyViewName.key][env2]; let job">
+                    <div (click)="selectJobInfo(job)">
                       <i [ngStyle]="{'color': job.color === 'blue' ? 'green' :
                                                   job.color === 'red' ? 'red' :
                                                   'grey'}"
                          class="fa fa-fw fa-star">
                         </i>
-                    </span>
-<!--                    <span *ngIf="displayJobLink">-->
-<!--                      <a href="{{ job.url }}"><i class="fa fa-fw fa-eye"></i></a>-->
-<!--                    </span>-->
-                  </div>
-                </td>
-              </tr>
+                    </div>
+            </div>
+          </td>
+        </tr>
         </tbody>
 
       </table>
 
-    </div>
-  </div>
+
+      <div *ngIf="selectedJob">
+        <div class="card">
+          <div class="card-header">
+           <h1>{{ selectedJob.name }}</h1>
+          </div>
+          <div class="card-body">
+            Folder Name : {{ selectedJob.folderName }} <br>
+            Jenkins URL : <a href="{{ selectedJob.url }}"> {{ selectedJob.url }} </a> <br>
+            Latest build Date : {{ selectedJob.lastBuild.timestamp | date }} <br>
+            Latest build Duration : {{ selectedJob.lastBuild.duration | date: 'HH:mm:ss': 'UTC' }} <br>
+            Latest 5 builds : <br>
+
+            <!--        <ngb-accordion #acc="ngbAccordion" activeIds="">-->
+
+            <div *ngFor="let build of getLastBuilds(selectedJob)">
+
+              <button type="button" class="btn btn-primary"
+                      (click)="getBuildErrorTests(selectedJob.fullName, build.id)"> Build n° {{build.id}}
+              </button>
+              <div *ngIf="buildErrors[selectedJob.fullName] && buildErrors[selectedJob.fullName][build.id] && buildErrors[selectedJob.fullName][build.id].length !== 0">
 
 
-  <div *ngIf="selectedJob">
-    <div class="card">
-      <div class="card-header">
-        {{ selectedJob.name }}
+                <table class="table table-striped table-hover">
+                  <thead>
+                  <tr>
+                    <th scope="col" sortable="status" (sort)="onSort($event)" style="width: 8%">Status</th>
+                    <th scope="col" sortable="name" (sort)="onSort($event)" style="width: 27%">Name</th>
+                    <th scope="col" sortable="details" (sort)="onSort($event)" style="width: 65%">Details</th>
+                  </tr>
+                  </thead>
+
+                  <tbody>
+                  <tr *ngFor="let testError of buildErrors[selectedJob.fullName][build.id]">
+                    <td> {{testError.status}} </td>
+                    <td> {{testError.name}} </td>
+                    <td> {{testError.errorStackTrace }} </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="card-body">
-    Folder Name : {{ selectedJob.folderName }} <br>
-    Jenkins URL : <a href="{{ selectedJob.url }}"> {{ selectedJob.url }} </a> <br>
-    Latest build Date : {{ selectedJob.lastBuild.timestamp | date }} <br>
-    Latest build Duration : {{ selectedJob.lastBuild.duration | date: 'HH:mm:ss': 'UTC' }} <br>
-    Latest 3 builds : <br>
-    <div *ngFor="let build of getLastThreeBuilds(selectedJob)">
-      #{{ build.id }} : {{ build.result }}
     </div>
   </div>
-  </div>
-  </div>
-
 </div>
+
