@@ -5,10 +5,10 @@ import { MetricRoutingModule } from './metric-routing.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 // component
-import { MetricComponent } from './metric.component';
+import {MetricComponent, NgbdSortableHeader} from './metric.component';
 
 @NgModule({
   imports: [CommonModule, FormsModule, MetricRoutingModule, NgbModule],
-  declarations: [MetricComponent]
+  declarations: [MetricComponent, NgbdSortableHeader]
 })
 export class MetricModule {}

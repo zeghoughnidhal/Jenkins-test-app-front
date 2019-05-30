@@ -32,4 +32,9 @@ export class JobService {
     const url = '/api/results/' + jobFullPath + '/' + buildId;
     return this.httpClient.get(url);
   }
+
+  getSubfolders(folderPath): Observable<any> {
+    return this.httpClient.get('/api/subfolders/' + folderPath);
+  }
+
 }
