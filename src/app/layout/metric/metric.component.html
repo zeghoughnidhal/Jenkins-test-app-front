@@ -1,243 +1,401 @@
 <div [@routerTransition]>
 
   <div class="card mb-3">
-    <!--    <div class="card-header"></div>-->
-    <div class="card-body">
-      <div class="row">
-        <div class="col col-10">
-          <button class="btn btn-info" [routerLink]="['/metrics']" [routerLinkActive]="['router-link-active']">
-            <i class="fa fa-fw fa-folder"></i>
-            root
-          </button>
-          <button class="btn btn-info" *ngIf="pathLevel1"
-                  [routerLink]="['/metrics', pathLevel1]"
-                  [routerLinkActive]="['router-link-active']">
-            <i class="fa fa-fw fa-folder"></i>
-            {{ pathLevel1 }}
-          </button>
-          <button class="btn btn-info" *ngIf="pathLevel2"
-                  [routerLink]="['/metrics', pathLevel1, pathLevel2]"
-                  [routerLinkActive]="['router-link-active']">
-            <i class="fa fa-fw fa-folder"></i>
-            {{ pathLevel2 }}
-          </button>
-          <button class="btn btn-info" *ngIf="pathLevel3"
-                  [routerLink]="['/metrics', pathLevel1, pathLevel2, pathLevel3]"
-                  [routerLinkActive]="['router-link-active']">
-            <i class="fa fa-fw fa-folder"></i>
-            {{ pathLevel3 }}
-          </button>
-        </div>
-
-        <div class="col col-2">
-          <button type="button" class="btn btn-primary" (click)="refreshFolder(pathFullLevels)">Refresh</button>
-        </div>
-
+    <div class="row">
+      <div class="col col-10">
+        <button class="btn btn-info" [routerLink]="['/metrics']" [routerLinkActive]="['router-link-active']">
+          <i class="fa fa-fw fa-folder"></i>
+          root
+        </button>
+        <button class="btn btn-info" *ngIf="pathLevel1"
+                [routerLink]="['/metrics', pathLevel1]"
+                [routerLinkActive]="['router-link-active']">
+          <i class="fa fa-fw fa-folder"></i>
+          {{ pathLevel1 }}
+        </button>
+        <button class="btn btn-info" *ngIf="pathLevel2"
+                [routerLink]="['/metrics', pathLevel1, pathLevel2]"
+                [routerLinkActive]="['router-link-active']">
+          <i class="fa fa-fw fa-folder"></i>
+          {{ pathLevel2 }}
+        </button>
+        <button class="btn btn-info" *ngIf="pathLevel3"
+                [routerLink]="['/metrics', pathLevel1, pathLevel2, pathLevel3]"
+                [routerLinkActive]="['router-link-active']">
+          <i class="fa fa-fw fa-folder"></i>
+          {{ pathLevel3 }}
+        </button>
       </div>
-      <div class="row" *ngIf="subFolders.length">
-        <div class="col col-12">
-          <div class="breadcrumb">
 
-          <span *ngIf="!pathLevel1 && !pathLevel2 && !pathLevel3">
-            <button class="btn btn-info" *ngFor="let sub_folder of subFolders"
-                    [routerLink]="['/metrics', sub_folder]"
-                    [routerLinkActive]="['router-link-active']">
-              <i class="fa fa-fw fa-folder"></i>
-              {{ sub_folder }}
-            </button>
-          </span>
-
-            <span *ngIf="pathLevel1 && !pathLevel2 && !pathLevel3">
-            <button class="btn btn-info" *ngFor="let sub_folder of subFolders"
-                    [routerLink]="['/metrics', pathLevel1, sub_folder]"
-                    [routerLinkActive]="['router-link-active']">
-              <i class="fa fa-fw fa-folder"></i>
-              {{ sub_folder }}
-            </button>
-          </span>
-
-            <span *ngIf="pathLevel2 && !pathLevel3">
-            <button class="btn btn-info" *ngFor="let sub_folder of subFolders"
-                    [routerLink]="['/metrics', pathLevel1, pathLevel2, sub_folder]"
-                    [routerLinkActive]="['router-link-active']">
-              <i class="fa fa-fw fa-folder"></i>
-              {{ sub_folder }}
-            </button>
-          </span>
-
-            <span *ngIf="pathLevel3">
-            <button class="btn btn-info" *ngFor="let sub_folder of subFolders"
-                    [routerLink]="['/metrics', pathLevel1, pathLevel2, pathLevel3, sub_folder]"
-                    [routerLinkActive]="['router-link-active']">
-              <i class="fa fa-fw fa-folder"></i>
-              {{ sub_folder }}
-            </button>
-          </span>
-          </div>
-
-        </div>
+      <div class="col col-2">
+        <button type="button" class="btn btn-primary" (click)="refreshFolderRecursive(pathFullLevels)">Recursive Scan</button>
       </div>
-      <div class="row">
-        <table class="table table-striped">
 
-          <!-- envs in header -->
-          <thead>
-          <tr>
-            <th style="width: 20%">Job Name</th>
-            <th *ngFor="let env of envs">{{env}}</th>
-          </tr>
-          </thead>
+    </div>
+  </div>
 
-          <!-- jobs results in table body -->
-          <tbody>
-          <tr *ngFor="let keyViewName of jobs | keyvalue">
-            <!--job name (keyViewName.key)-->
-            <td> {{ keyViewName.key }}</td>
-            <!--job results for this keyViewName (for each env)-->
-            <td *ngFor="let env2 of envs">
-              <div *ngIf="jobs[keyViewName.key][env2]; let job">
-                <div (click)="selectJobInfo(job); refreshSelectedJobStatistics()">
-                  <i [ngStyle]="{'color': job.color === 'blue' ? 'green' :
-                                                    job.color === 'red' ? 'red' :
-                                                    'grey'}"
-                     class="fa fa-fw fa-star">
-                  </i>
-                </div>
+  <div class="row" *ngIf="subFolders.length">
+    <div class="col col-xl-12 col-lg-12">
+      <div class="breadcrumb">
+
+        <span *ngIf="!pathLevel1 && !pathLevel2 && !pathLevel3">
+          <button class="btn btn-info" *ngFor="let sub_folder of subFolders"
+                  [routerLink]="['/metrics', sub_folder]"
+                  [routerLinkActive]="['router-link-active']">
+            <i class="fa fa-fw fa-folder"></i>
+            {{ sub_folder }}
+          </button>
+        </span>
+
+        <span *ngIf="pathLevel1 && !pathLevel2 && !pathLevel3">
+          <button class="btn btn-info" *ngFor="let sub_folder of subFolders"
+                  [routerLink]="['/metrics', pathLevel1, sub_folder]"
+                  [routerLinkActive]="['router-link-active']">
+            <i class="fa fa-fw fa-folder"></i>
+            {{ sub_folder }}
+          </button>
+        </span>
+
+        <span *ngIf="pathLevel2 && !pathLevel3">
+          <button class="btn btn-info" *ngFor="let sub_folder of subFolders"
+                  [routerLink]="['/metrics', pathLevel1, pathLevel2, sub_folder]"
+                  [routerLinkActive]="['router-link-active']">
+            <i class="fa fa-fw fa-folder"></i>
+            {{ sub_folder }}
+          </button>
+        </span>
+
+        <span *ngIf="pathLevel3">
+          <button class="btn btn-info" *ngFor="let sub_folder of subFolders"
+                  [routerLink]="['/metrics', pathLevel1, pathLevel2, pathLevel3, sub_folder]"
+                  [routerLinkActive]="['router-link-active']">
+            <i class="fa fa-fw fa-folder"></i>
+            {{ sub_folder }}
+          </button>
+        </span>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+
+    </div>
+    <div class="panel-body">
+      <!-- Table -->
+      <table class="table table-striped">
+
+        <!-- envs in header -->
+        <thead>
+        <tr>
+          <th style="width: 20%">Job Name</th>
+          <th *ngFor="let env of envs">{{env}}</th>
+        </tr>
+        </thead>
+
+        <!-- jobs results in table body -->
+        <tbody>
+        <tr *ngFor="let keyViewName of jobs | keyvalue">
+          <!--job name (keyViewName.key)-->
+          <td> {{ keyViewName.key }}</td>
+          <!--job results for this keyViewName (for each env)-->
+          <td *ngFor="let env2 of envs">
+            <div *ngIf="jobs[keyViewName.key][env2]; let job">
+              <div (click)="selectJobInfo(job); refreshSelectedJobStatistics()">
+                <i (mouseover)="job.mouseHoverJob=true" (mouseleave)="job.mouseHoverJob=false"
+                  [ngStyle]="{'color': job.mouseHoverJob ? 'yellow' :
+                                       job.color === 'blue' ? 'green' :
+                                       job.color === 'red' ? 'red' :
+                                       'grey'}"
+                   class="fa fa-fw fa-star">
+                </i>
               </div>
-            </td>
-          </tr>
-          </tbody>
+            </div>
+          </td>
+        </tr>
+        </tbody>
 
-        </table>
-      </div>
+      </table>
 
 
       <div *ngIf="selectedJob">
-
-        <!-- details du Job (selectionné depuis la matrice (etoiles rouge/vertes) -->
-        <div class="row">
-
-
-          <div class="col col-xs-12 col-sm-12 col-lg-6 col-xl-6">
-
-            <!-- job infos (last build status, description etc...) -->
-            <div>
-              Folder Name : {{ selectedJob.folderName }} <br>
-              Jenkins URL : <a href="{{ selectedJob.url }}"> {{ selectedJob.url }} </a> <br>
-              Latest build Date : {{ selectedJob.lastBuild.timestamp | date }} <br>
-              Latest build Duration : {{ selectedJob.lastBuild.duration | date: 'HH:mm:ss': 'UTC' }} <br>
+        <div class="card">
+          <div class="card-header">
+            <div class="row">
+              <div class="col col-4">
+                <h2><i class="fa fa-star"></i> {{ selectedJob.name }} <br/></h2>
+              </div>
+              <div class="col col-8 text-right">
+                <h2><i class="fa fa-folder"></i> {{ selectedJob.folderName }}</h2>
+              </div>
             </div>
+            <div class="row">
+              <div class="col">
+                <small>{{ selectedJob.description }}</small>
+              </div>
+            </div>
+          </div>
 
-            <!-- selected build infos (build is selected from canvas #jobResultsStatistics -->
-            <div *ngIf="selectedBuild">
+          <div class="card-body">
+
+            <div class="row">
+
+              <div class="col col-6">
+                <h2>
+                  <i class="fa fa-clock-o"></i> last build on {{ selectedJob.lastBuild.timestamp | date }}
+                  <span [ngClass]="selectedJob.lastBuild.result === 'SUCCESS' ? 'badge badge-info' :
+                                   'badge badge-danger'">
+                    {{ selectedJob.lastBuild.result }}
+                  </span>
+                </h2>
+                <h5><i class="fa fa-clock-o"></i> duration {{ selectedJob.lastBuild.duration | date: 'HH:mm:ss': 'UTC' }}
+                </h5>
+                <h3><a href="{{ selectedJob.url }}"> <i class="fa fa-link"></i> View on Jenkins </a></h3>
 
 
-              <h2>Details for build #{{ selectedBuild.id }}</h2>
-              <h5>
-                <i class="fa fa-clock-o"></i> built on {{ selectedBuild.timestamp | date }}
-                <span [ngClass]="selectedBuild.result === 'SUCCESS' ? 'badge badge-success' :
+                <div *ngIf="selectedBuild">
+
+                  <div class="card">
+                    <div class="card-body">
+
+                      <h3>Details for build #{{ selectedBuild.id }}</h3>
+                      <h5>
+                        <i class="fa fa-clock-o"></i> built on {{ selectedBuild.timestamp | date }}
+                        <span [ngClass]="selectedBuild.result === 'SUCCESS' ? 'badge badge-success' :
                                      'badge badge-danger'">
                                 {{ selectedBuild.result }}
                               </span>
-              </h5>
-              <h6>
-                <i class="fa fa-clock-o"></i>
-                duration {{ selectedBuild.duration | date: 'HH:mm:ss': 'UTC' }}
-              </h6>
-              <div class="text-white">{{ selectedBuild.description }}</div>
-              <h6><a href="{{ selectedBuild.url }}"> <i class="fa fa-link"></i> View on Jenkins </a></h6>
+                      </h5>
+                      <h5>
+                        <i class="fa fa-clock-o"></i>
+                        duration {{ selectedBuild.duration | date: 'HH:mm:ss': 'UTC' }}
+                      </h5>
+                      <h5>
+                        <i class="fa fa-desktop"></i>
+                        {{ selectedBuild.description }}
+                      </h5>
+                      <h4><a href="{{ selectedBuild.url }}"> <i class="fa fa-link"></i> View on Jenkins </a></h4>
+                      <div *ngIf="currentBuildErrors && currentBuildErrors.length">
+                        <span class="badge badge-success"><h5>PASSED : {{ currentBuildStatistics.nbPassed }}</h5></span>
+                        <span class="badge badge-info"><h5>FIXED : {{ currentBuildStatistics.nbFixed }}</h5></span>
+                        <span class="badge badge-danger"><h5>FAILED : {{ currentBuildStatistics.nbFailed }}</h5></span>
+                        <span
+                          class="badge badge-warning"><h5>REGRESSION : {{ currentBuildStatistics.nbRegression }}</h5></span>
+                        <span
+                          class="badge badge-default"><h5>SKIPPED : {{ currentBuildStatistics.nbSkipped }}</h5></span>
+                      </div>
+
+
+                    </div>
+
+                  </div>
+                </div>
+
+
+              </div>
+
+              <div class="col col-6">
+                <canvas baseChart
+                        [datasets]="barChartData"
+                        [labels]="barChartLabels"
+                        [options]="barChartOptions"
+                        [legend]="barChartLegend"
+                        [chartType]="barChartType"
+                        (chartHover)="chartHovered($event)"
+                        (chartClick)="chartClicked($event)">
+                </canvas>
+              </div>
             </div>
 
+            <div class="row">
+              <div class="col col-12">
 
-          </div>
+                <ngx-spinner></ngx-spinner>
 
-          <!-- job builds canvas (errors/successes)-->
-          <div class="col col-xs-12 col-sm-12 col-lg-6  col-xl-6">
-
-            <canvas id="jobResultsStatistics" baseChart
-                    [datasets]="barChartData"
-                    [labels]="barChartLabels"
-                    [options]="barChartOptions"
-                    [legend]="barChartLegend"
-                    [chartType]="barChartType"
-                    (chartHover)="chartHovered($event)"
-                    (chartClick)="chartClicked($event)">
-
-            </canvas>
-
-          </div>
-
-
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col col-12">
-
-
-          <div *ngIf="selectedBuild && currentBuildErrors.length">
-            <ul class="timeline">
-              <li *ngFor="let testError of currentBuildErrors; let testErrorIndex = index"
-                  [attr.data-index]="testErrorIndex"
-                  [ngClass]="testError.status === 'FAILED' ? 'timeline' :
+                <div *ngIf="selectedBuild && currentBuildErrors && currentBuildErrors.length">
+<!--                  TIMELINE VIEW-->
+                  <!--<ul class="timeline">
+                    <li *ngFor="let testError of currentBuildErrors; let testErrorIndex = index"
+                        [attr.data-index]="testErrorIndex"
+                        [ngClass]="testError.status === 'FAILED' ? 'timeline' :
                                    testError.status === 'SKIPPED' ? 'timeline-inverted' :
                                    'timeline'
                                   ">
-                <div [ngClass]="testError.status === 'FAILED' ? 'timeline-badge danger' :
+                      <div [ngClass]="testError.status === 'FAILED' ? 'timeline-badge danger' :
                                       testError.status === 'REGRESSION' ? 'timeline-badge warning' :
                                       testError.status === 'SKIPPED' ? 'timeline-badge info' :
                                       'timeline-badge'
                                       ">
-                  <i [ngClass]="testError.status === 'FAILED' ? 'fa fa-ban' :
+                        <i [ngClass]="testError.status === 'FAILED' ? 'fa fa-ban' :
                                       testError.status === 'REGRESSION' ? 'fa fa-refresh' :
                                       testError.status === 'SKIPPED' ? 'fa fa-forward' :
                                       'timeline-badge'
                                       "></i>
-                </div>
-                <div class="timeline-panel">
-                  <div class="timeline-heading">
+                      </div>
+                      <div class="timeline-panel">
+                        <div class="timeline-heading">
 
-                    <div class="row">
+                          <div class="row">
 
-                      <div class="col col-11">
-                        <h4 class="timeline-title">
-                          {{testError.name}}
-                        </h4>
-                        <h5>
+                            <div class="col col-10">
+                              <h5 class="timeline-title">
+                                {{testError.name}}
+                              </h5>
+                              <h6>
                                 <span [ngClass]="testError.status === 'FAILED' ? 'badge badge-danger' :
                                       testError.status === 'REGRESSION' ? 'badge badge-warning' :
                                       testError.status === 'SKIPPED' ? 'badge badge-info' :
                                       'badge'">
                                   {{ testError.status }}
                                 </span>
-                          <i class="fa fa-clock-o"></i> {{ testError.duration | date: 'HH:mm:ss': 'UTC' }}
-                        </h5>
+                                &nbsp; <i class="fa fa-clock-o"></i> {{ testError.duration | date: 'HH:mm:ss': 'UTC' }}
+                              </h6>
+                            </div>
+
+                            <div class="col col-2 text-center">
+                              <span class="badge"><h3>{{ testErrorIndex }}</h3></span>
+                            </div>
+
+                          </div>
+
+                        </div>
+                        <div class="timeline-body">
+                          <p>{{testError.errorStackTrace}}</p>
+                        </div>
                       </div>
+                    </li>
+                  </ul>-->
 
-                      <div class="col col-1 text-center">
-                        <h1><span class="badge">{{ testErrorIndex }}</span></h1>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  <div class="timeline-body">
-                    <p>{{testError.errorStackTrace}}</p>
-                  </div>
+<!--                  TABLE VIEW-->
+                  <table class="table table-striped table-hover table-responsive">
+                    <thead>
+                    <tr>
+                      <th>#</th>
+                      <th> <a (click)="sortBy('status')">Status</a></th>
+                      <th>Duration</th>
+                      <th>Name</th>
+                      <th>Stack Trace</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let testError of currentBuildErrors; let testErrorIndex = index"
+                        [attr.data-index]="testErrorIndex">
+                      <td>{{ testErrorIndex }}</td>
+                      <td>{{ testError.status }}</td>
+                      <td>{{ testError.duration }}</td>
+                      <td>{{ testError.name }}</td>
+                      <td style="width: 60%">{{ testError.errorStackTrace }}</td>
+                    </tr>
+                    </tbody>
+                  </table>
                 </div>
-              </li>
-            </ul>
+              </div>
+
+            </div>
+
+            <!--        <div class="row">
+                      <div class="col col-12">
+
+                        <ngb-tabset>
+                          <ngb-tab *ngFor="let build of getLastBuilds(selectedJob)">
+                            <ng-template ngbTabTitle>
+                              <span (click)="refreshBuildErrors(selectedJob.fullName, build.id)">
+                                Build n° {{build.id}} <br/>
+                              </span>
+                            </ng-template>
+                            <ng-template ngbTabContent>
+                              <div
+                                *ngIf="buildErrors[selectedJob.fullName] && buildErrors[selectedJob.fullName][build.id] && buildErrors[selectedJob.fullName][build.id].length !== 0">
+
+                                <div class="card-body">
+                                  <ul class="timeline">
+                                    <li *ngFor="let testError of buildErrors[selectedJob.fullName][build.id]"
+                                        [ngClass]="testError.status === 'FAILED' ? 'timeline' :
+                                           testError.status === 'SKIPPED' ? 'timeline-inverted' :
+                                           'timeline'
+                                          ">
+                                      <div [ngClass]="testError.status === 'FAILED' ? 'timeline-badge danger' :
+                                              testError.status === 'REGRESSION' ? 'timeline-badge warning' :
+                                              testError.status === 'SKIPPED' ? 'timeline-badge info' :
+                                              'timeline-badge'
+                                              ">
+                                        <i [ngClass]="testError.status === 'FAILED' ? 'fa fa-ban' :
+                                              testError.status === 'REGRESSION' ? 'fa fa-refresh' :
+                                              testError.status === 'SKIPPED' ? 'fa fa-forward' :
+                                              'timeline-badge'
+                                              "></i>
+                                      </div>
+                                      <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                          <h6 class="timeline-title">{{testError.name}}</h6>
+                                          <p>
+                                            <small class="text-muted">{{testError.status}} <i
+                                              class="fa fa-clock-o"></i> {{testError.duration}} s
+                                            </small>
+                                          </p>
+                                        </div>
+                                        <div class="timeline-body">
+                                          <p>{{testError.errorStackTrace}}</p>
+                                        </div>
+                                      </div>
+                                    </li>
+                                  </ul>
+                                </div>
+
+                                <table class="table table-striped table-hover">
+                                  <thead>
+                                  <tr>
+                                    <th scope="col" sortable="status" (sort)="onSort($event)" style="width: 8%">Status</th>
+                                    <th scope="col" sortable="name" (sort)="onSort($event)" style="width: 27%">Name</th>
+                                    <th scope="col" sortable="details" (sort)="onSort($event)" style="width: 65%">Details</th>
+                                  </tr>
+                                  </thead>
+
+                                  <tbody>
+                                  <tr *ngFor="let testError of buildErrors[selectedJob.fullName][build.id]"
+                                      [ngClass]="testError.status === 'FAILED' ? 'danger' : 'default'">
+                                    <td> {{testError.status}} </td>
+                                    <td> {{testError.name}} </td>
+                                    <td> {{testError.errorStackTrace}} </td>
+                                  </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+
+                            </ng-template>
+                          </ngb-tab>
+                        </ngb-tabset>
+
+                      </div>
+                    </div>
+        -->
+
+
+            <!--                <table class="table table-striped table-hover">-->
+            <!--                  <thead>-->
+            <!--                  <tr>-->
+            <!--                    <th scope="col" sortable="status" (sort)="onSort($event)" style="width: 8%">Status</th>-->
+            <!--                    <th scope="col" sortable="name" (sort)="onSort($event)" style="width: 27%">Name</th>-->
+            <!--                    <th scope="col" sortable="details" (sort)="onSort($event)" style="width: 65%">Details</th>-->
+            <!--                  </tr>-->
+            <!--                  </thead>-->
+
+            <!--                  <tbody>-->
+            <!--                  <tr *ngFor="let testError of buildErrors[selectedJob.fullName][build.id]">-->
+            <!--                    <td> {{testError.status}} </td>-->
+            <!--                    <td> {{testError.name}} </td>-->
+            <!--                    <td> {{testError.errorStackTrace}} </td>-->
+            <!--                  </tr>-->
+            <!--                  </tbody>-->
+            <!--                </table>-->
+            <!--              </div>-->
+            <!--            </div>-->
 
           </div>
         </div>
-
       </div>
-
-
     </div>
   </div>
 </div>
-
-
 

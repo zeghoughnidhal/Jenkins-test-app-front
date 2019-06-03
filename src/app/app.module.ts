@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LanguageTranslationModule } from './shared/modules/language-translation/language-translation.module';
+import { LoadingBarHttpClientModule } from '@ngx-loading-bar/http-client';
 
 
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
@@ -18,6 +19,7 @@ import { AppComponent } from './app.component';
     AppRoutingModule,
     HttpClientModule,
     LanguageTranslationModule,
+    LoadingBarHttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent],
