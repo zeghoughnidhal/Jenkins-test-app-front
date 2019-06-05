@@ -2,6 +2,7 @@ import {Component, Input, Output, OnInit, EventEmitter, Directive, ViewChildren,
 import { routerTransition } from '../../router.animations';
 import { JobService } from '../../services/job.service';
 import { ActivatedRoute } from '@angular/router';
+import {NgxSpinnerService} from 'ngx-spinner';
 
 // sort methods for Test Results
 export type SortDirection = 'asc' | 'desc' | '';
@@ -58,12 +59,80 @@ export class MetricComponent implements OnInit {
 
   /// variables for browser
   private subRoute: any;
-  selectedJob: string;
-  pathLevel1: string;
+  selectedJob: any;
+  selectedBuild: any;
+  selectedJobStatistics = {
+    nbErrors: 0,
+    nbSuccess: 0,
+    nbTotal: 0
+  }
+    pathLevel1: string;
   pathLevel2: string;
   pathLevel3: string;
   pathFullLevels: string;
   subFolders = [];
+
+
+  // bar chart
+  public barChartOptions: any = {
+    scaleShowVerticalLines: false,
+    responsive: true
+  };
+  public barChartLabels: string[] = ['Success', 'Error'];
+  public barChartType: string;
+  public barChartLegend: boolean;
+  public barChartData: any[] = [];
+
+  // events
+  public chartClicked(e: any): void {
+    // get index from event
+    if (e.active.length === 0) {
+      return;
+    }
+    const barIndex = e.active[0]._index;
+    this.selectedBuild = this.selectedJob.builds[barIndex];
+    this.currentBuildErrors = [];
+    this.refreshBuildErrors(this.selectedJob.fullName, this.selectedBuild.id);
+  }
+
+  public chartHovered(e: any): void {
+    // console.log(e);
+  }
+
+  refreshSelectedJobStatistics() {
+
+    // job statistics
+    let nbErrors = 0;
+    let nbSuccess = 0;
+    // job charts
+    const chartDataErrors = [];
+    const chartDataSuccess = [];
+    const chartLabels = [];
+
+    // loop on builds to generate statistics
+    this.selectedJob.builds.forEach(build => {
+      const isBuildOnFailure = build.result === 'FAILURE';
+      /// job statistics
+      nbErrors += isBuildOnFailure ? 1 : 0;
+      nbSuccess += isBuildOnFailure ? 0 : 1;
+      /// job charts
+      chartDataErrors.push(isBuildOnFailure ? '1' : '0');
+      chartDataSuccess.push(isBuildOnFailure ? '0' : '1');
+      chartLabels.push(build.id);
+    });
+
+    // affect new values to refresh view
+    /// job statistics
+    this.selectedJobStatistics.nbErrors = nbErrors;
+    this.selectedJobStatistics.nbSuccess = nbSuccess;
+    this.selectedJobStatistics.nbTotal = nbErrors + nbSuccess;
+    /// job charts
+    this.barChartData = [
+      { data: chartDataErrors, label: 'Errors'},
+      { data: chartDataSuccess, label: 'Success'}
+    ];
+    this.barChartLabels = chartLabels;
+  }
 
   onSort({column, direction}: SortEvent) {
 
@@ -93,6 +162,7 @@ export class MetricComponent implements OnInit {
 
   selectJobInfo(job) {
     this.selectedJob = job;
+    this.selectedBuild = null;
   }
 
   getLastBuilds(job) {
@@ -113,7 +183,7 @@ export class MetricComponent implements OnInit {
     });
   }
 
-  getBuildErrorTests(jobFullPath, buildId) {
+  refreshBuildErrors(jobFullPath, buildId) {
     this.jobService.getBuildErrorTests(jobFullPath, buildId).subscribe(
       value => {
         if (this.buildErrors[jobFullPath] === undefined) {
@@ -125,7 +195,7 @@ export class MetricComponent implements OnInit {
   }
 
   // constructor
-  constructor(private jobService: JobService, private route: ActivatedRoute) {
+  constructor(private jobService: JobService, private route: ActivatedRoute,  private spinner: NgxSpinnerService) {
   }
 
   // init
@@ -142,7 +212,12 @@ export class MetricComponent implements OnInit {
         }
       );
 
-      this.refreshFolder(this.pathFullLevels);
+      if (this.pathFullLevels !== "") {
+        this.refreshFolder(this.pathFullLevels);
+      }
+      this.barChartType = 'bar';
+      this.barChartLegend = true;
+
     });
   }
 
