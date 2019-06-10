@@ -33,7 +33,7 @@
     </div>
   </div>
 
-  <div class="row" *ngIf="current_folder.sub_folders.length">
+  <div class="row" *ngIf="current_folder && current_folder.sub_folders && current_folder.sub_folders.length">
     <div class="col col-xl-12 col-lg-12">
       <div class="breadcrumb">
 
@@ -84,9 +84,6 @@
           <table class="table table-hover table-striped">
             <thead>
             <tr>
-              <th>
-                Select
-              </th>
               <th class="th-lg my-color-blue">
                 <a (click)="sortBy('name')">Original Name</a>
               </th>
@@ -106,13 +103,6 @@
             </thead>
             <tbody>
             <tr *ngFor="let row of current_folder.jobs;let i = index">
-              <th scope="row">
-                <div class="input-group">
-                  <span class="input-group-addon">
-                    <input type="checkbox" aria-label="...">
-                  </span>
-                </div>
-              </th>
               <td> <span [ngbPopover]="row.description" [popoverTitle]="row.name">{{row.name}}</span></td>
               <td><i [ngStyle]="{'color': row.color === 'blue' ? 'green' :
                                           row.color === 'red' ? 'red' :

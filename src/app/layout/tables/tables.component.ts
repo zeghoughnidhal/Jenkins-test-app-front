@@ -39,30 +39,21 @@ export class TablesComponent implements OnInit {
   }
 
   private refreshFolder() {
-    this.jobService.getJobsForView(this.pathFull).subscribe(
+    this.jobService.getJobs(this.pathFull).subscribe(
       value => {
-        console.log('refreshFolder : values', value);
-        this.current_folder.sub_folders = value.sub_folders;
-        this.current_folder.jobs = value.jobs;
+        console.log('refreshFolder: values', value);
+        this.current_folder.jobs = value;
       }
     );
   }
 
   scanJobsRecursive() {
-    this.jobService.getJobsByFolderPath(this.pathFull).subscribe(
+    this.jobService.getJobs(this.pathFull, true).subscribe(
       value => {
         console.log('scanJobsRecursive : values', value);
         this.current_folder.jobs = value;
       }
     );
-  }
-  private parseRoute() {
-    this.subRoute = this.route.params.subscribe(params => {
-      this.pathFolder1 = params['pathFolder1'] || null;
-      this.pathFolder2 = params['pathFolder2'] || null;
-      this.pathFolder3 = params['pathFolder3'] || null;
-      this.pathFull = JobService.getFolderPath(this.pathFolder1, this.pathFolder2, this.pathFolder3);
-    });
   }
 
   // constructor
@@ -71,8 +62,21 @@ export class TablesComponent implements OnInit {
 
   // init
   ngOnInit() {
-    this.parseRoute();
-    this.refreshFolder();
+    this.subRoute = this.route.params.subscribe(params => {
+      this.pathFolder1 = params.pathFolder1 || null;
+      this.pathFolder2 = params.pathFolder2 || null;
+      this.pathFolder3 = params.pathFolder3 || null;
+      this.pathFull = JobService.getFolderPath(this.pathFolder1, this.pathFolder2, this.pathFolder3);
+
+      this.jobService.getSubfolders(this.pathFull).subscribe(
+        subFolders => {
+          console.log('get subfolder form', this.pathFull);
+          this.current_folder.sub_folders = subFolders;
+        }
+      );
+
+      this.refreshFolder();
+    });
   }
 
   // tslint:disable-next-line:use-life-cycle-interface

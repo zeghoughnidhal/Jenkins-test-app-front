@@ -14,15 +14,6 @@ export interface SortEvent {
   direction: SortDirection;
 }
 
-@Directive({
-  selector: 'th[sortable]',
-  host: {
-    '[class.asc]': 'direction === "asc"',
-    '[class.desc]': 'direction === "desc"',
-    '(click)': 'rotate()'
-  }
-})
-
 // tslint:disable-next-line:directive-class-suffix
 export class NgbdSortableHeader {
 
@@ -44,18 +35,20 @@ export class NgbdSortableHeader {
 })
 export class MetricComponent implements OnInit {
 
-  @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>;
-
   // variables
   envs: [];
   jobs: any;
-  @Input() pathFull = {
-    text: 'Functional-tests/Tempest/ScheduleTempest'
-  };
-  // @Input() displayJobLink = false;
-  @Output() sort = new EventEmitter<SortEvent>();
   buildErrors = {};
   currentBuildErrors = [];
+  currentBuildErrorsSorted = false;
+  currentBuildStatistics = {
+    nbPassed: 0,
+    nbFixed: 0,
+    nbRegression: 0,
+    nbFailed: 0,
+    nbSkipped: 0,
+    nbTotal: 0
+  };
 
   /// variables for browser
   private subRoute: any;
@@ -65,13 +58,12 @@ export class MetricComponent implements OnInit {
     nbErrors: 0,
     nbSuccess: 0,
     nbTotal: 0
-  }
-    pathLevel1: string;
+  };
+  pathLevel1: string;
   pathLevel2: string;
   pathLevel3: string;
   pathFullLevels: string;
   subFolders = [];
-
 
   // bar chart
   public barChartOptions: any = {
@@ -82,6 +74,14 @@ export class MetricComponent implements OnInit {
   public barChartType: string;
   public barChartLegend: boolean;
   public barChartData: any[] = [];
+
+  // Olar (for test report statistics)
+  public polarAreaChartLabels: string[] = ['nbPassed', 'nbFixed',
+    'nbFailed', 'nbRegression', 'nbSkipped'];
+  public polarAreaChartData: number[] = [0, 0, 0, 0, 0];
+  public polarAreaLegend: boolean;
+  public polarAreaChartType: string;
+  mouseHoverJob: boolean;
 
   // events
   public chartClicked(e: any): void {
@@ -102,19 +102,19 @@ export class MetricComponent implements OnInit {
   refreshSelectedJobStatistics() {
 
     // job statistics
-    let nbErrors = 0;
-    let nbSuccess = 0;
-    // job charts
+    let nbBuildErrors = 0;
+    let nbBuildSuccess = 0;
+    // job bar chart (builds status : success / error)
     const chartDataErrors = [];
     const chartDataSuccess = [];
     const chartLabels = [];
 
-    // loop on builds to generate statistics
+    // loop on builds to generate bar chart
     this.selectedJob.builds.forEach(build => {
       const isBuildOnFailure = build.result === 'FAILURE';
       /// job statistics
-      nbErrors += isBuildOnFailure ? 1 : 0;
-      nbSuccess += isBuildOnFailure ? 0 : 1;
+      nbBuildErrors += isBuildOnFailure ? 1 : 0;
+      nbBuildSuccess += isBuildOnFailure ? 0 : 1;
       /// job charts
       chartDataErrors.push(isBuildOnFailure ? '1' : '0');
       chartDataSuccess.push(isBuildOnFailure ? '0' : '1');
@@ -123,9 +123,9 @@ export class MetricComponent implements OnInit {
 
     // affect new values to refresh view
     /// job statistics
-    this.selectedJobStatistics.nbErrors = nbErrors;
-    this.selectedJobStatistics.nbSuccess = nbSuccess;
-    this.selectedJobStatistics.nbTotal = nbErrors + nbSuccess;
+    this.selectedJobStatistics.nbErrors = nbBuildErrors;
+    this.selectedJobStatistics.nbSuccess = nbBuildSuccess;
+    this.selectedJobStatistics.nbTotal = nbBuildErrors + nbBuildSuccess;
     /// job charts
     this.barChartData = [
       { data: chartDataErrors, label: 'Errors'},
@@ -134,24 +134,31 @@ export class MetricComponent implements OnInit {
     this.barChartLabels = chartLabels;
   }
 
-  onSort({column, direction}: SortEvent) {
-
-    // resetting other headers
-    this.headers.forEach(header => {
-      if (header.sortable !== column) {
-        header.direction = '';
+  sortBy(by: string | any): void {
+    this.currentBuildErrors.sort((a: any, b: any) => {
+      if (a[by] < b[by]) {
+        return this.currentBuildErrorsSorted ? 1 : -1;
       }
+      if (a[by] > b[by]) {
+        return this.currentBuildErrorsSorted ? -1 : 1;
+      }
+      return 0;
     });
+    this.currentBuildErrorsSorted = !this.currentBuildErrorsSorted;
+  }
 
-    // sorting countries
-    this.currentBuildErrors = this.currentBuildErrors.sort((a, b) => {
-        const res = compare(a[column], b[column]);
-        return direction === 'asc' ? res : -res;
-      });
+  refreshFolderRecursive(path) {
+    console.log('refreshFolderRecursive : path', path);
+    this.jobService.getJobsForMetricsView(path, true).subscribe(
+      value => {
+        this.envs = value.envs;
+        this.jobs = value.jobs;
+      }
+    );
   }
 
   refreshFolder(path) {
-    console.log('getJobsForMetricsView : path', path);
+    console.log('refreshFolder : path', path);
     this.jobService.getJobsForMetricsView(path).subscribe(
       value => {
         this.envs = value.envs;
@@ -184,18 +191,28 @@ export class MetricComponent implements OnInit {
   }
 
   refreshBuildErrors(jobFullPath, buildId) {
+    this.spinner.show();
     this.jobService.getBuildErrorTests(jobFullPath, buildId).subscribe(
       value => {
         if (this.buildErrors[jobFullPath] === undefined) {
           this.buildErrors[jobFullPath] = {};
         }
-        this.buildErrors[jobFullPath][buildId] = value;
-        this.currentBuildErrors = this.buildErrors[jobFullPath][buildId];
+        // get cases from result
+        this.currentBuildErrors = value.cases;
+        // get cases statistics from result
+        this.currentBuildStatistics.nbPassed = value.nbPassed;
+        this.currentBuildStatistics.nbFixed = value.nbFixed;
+        this.currentBuildStatistics.nbFailed = value.nbFailed;
+        this.currentBuildStatistics.nbRegression = value.nbRegression;
+        this.currentBuildStatistics.nbSkipped = value.nbSkipped;
+        this.currentBuildStatistics.nbTotal = value.nbTotal;
+
+        this.spinner.hide();
       });
   }
 
   // constructor
-  constructor(private jobService: JobService, private route: ActivatedRoute,  private spinner: NgxSpinnerService) {
+  constructor(private jobService: JobService, private route: ActivatedRoute, private spinner: NgxSpinnerService) {
   }
 
   // init
@@ -212,12 +229,11 @@ export class MetricComponent implements OnInit {
         }
       );
 
-      if (this.pathFullLevels !== "") {
-        this.refreshFolder(this.pathFullLevels);
-      }
+      this.refreshFolder(this.pathFullLevels);
       this.barChartType = 'bar';
       this.barChartLegend = true;
-
+      this.polarAreaLegend = true;
+      this.polarAreaChartType = 'polarArea';
     });
   }
 
